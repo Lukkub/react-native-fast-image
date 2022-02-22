@@ -114,18 +114,32 @@ class FastImageViewManager extends SimpleViewManager<FastImageViewWithUrl> imple
         eventEmitter.receiveEvent(viewId, REACT_ON_LOAD_START_EVENT, new WritableNativeMap());
 
         if (requestManager != null) {
-            requestManager
-                    // This will make this work for remote and local images. e.g.
-                    //    - file:///
-                    //    - content://
-                    //    - res:/
-                    //    - android.resource://
-                    //    - data:image/png;base64
-                    .load(imageSource.getSourceForLoad())
-                    .dontTransform()
-                    .apply(FastImageViewConverter.getOptions(context, imageSource, source))
-                    .listener(new FastImageRequestListener(key))
-                    .into(view);
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) {
+                requestManager
+                        // This will make this work for remote and local images. e.g.
+                        //    - file:///
+                        //    - content://
+                        //    - res:/
+                        //    - android.resource://
+                        //    - data:image/png;base64
+                        .load(imageSource.getSourceForLoad())
+                        .dontTransform()
+                        .apply(FastImageViewConverter.getOptions(context, imageSource, source))
+                        .listener(new FastImageRequestListener(key))
+                        .into(view);
+            } else {
+                requestManager
+                        // This will make this work for remote and local images. e.g.
+                        //    - file:///
+                        //    - content://
+                        //    - res:/
+                        //    - android.resource://
+                        //    - data:image/png;base64
+                        .load(imageSource.getSourceForLoad())
+                        .apply(FastImageViewConverter.getOptions(context, imageSource, source))
+                        .listener(new FastImageRequestListener(key))
+                        .into(view);
+            }
         }
     }
 
